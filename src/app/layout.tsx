@@ -12,14 +12,57 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const APP_TITLE = "security-log — Digital Security Shift & Monthly Report";
+const APP_DESCRIPTION =
+  "Sistem logbook keamanan hotel digital: catat patroli shift, rekap kendaraan, serah terima tugas (overhandle), ekspor Word/Excel, & rekap bulanan real-time.";
+
+function resolveMetadataBase(): URL {
+  const candidate =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "") ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+    "http://localhost:3000";
+
+  try {
+    return new URL(candidate);
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
-  title: "security-log — Digital Security Shift & Monthly Report",
-  description:
-    "Aplikasi pencatatan shift keamanan hotel digital, rekap kendaraan parkir, log aktivitas, ekspor WhatsApp, CSV Excel, dan laporan bulanan siap cetak.",
+  metadataBase: resolveMetadataBase(),
+  applicationName: "security-log",
+  title: APP_TITLE,
+  description: APP_DESCRIPTION,
   icons: {
     icon: [{ url: "/logo.jpg", type: "image/jpeg" }],
     shortcut: [{ url: "/logo.jpg", type: "image/jpeg" }],
     apple: [{ url: "/logo.jpg", type: "image/jpeg" }],
+  },
+  openGraph: {
+    title: APP_TITLE,
+    description: APP_DESCRIPTION,
+    siteName: "security-log",
+    locale: "id_ID",
+    type: "website",
+    url: "/",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 447,
+        height: 447,
+        alt: "Logo security-log — Digital Security Shift & Monthly Report",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: APP_TITLE,
+    description: APP_DESCRIPTION,
+    images: ["/logo.jpg"],
   },
 };
 

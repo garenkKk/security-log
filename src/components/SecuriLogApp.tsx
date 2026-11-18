@@ -34,6 +34,7 @@ import {
 } from "@/lib/utils";
 import { ActiveShiftTab } from "./ActiveShiftTab";
 import { AppHeader, type AppTab, type SyncStatus } from "./AppHeader";
+import { AppSkeleton } from "./AppSkeleton";
 import { ConfirmModal } from "./ConfirmModal";
 import { MonthlyReportTab } from "./MonthlyReportTab";
 import { PhotoModal } from "./PhotoModal";
@@ -63,6 +64,9 @@ export function SecuriLogApp() {
   const [syncError, setSyncError] = useState<string>("");
   const [lastSyncedAt, setLastSyncedAt] = useState<string>("");
   const [isLoadingCloud, setIsLoadingCloud] = useState<boolean>(() => cloudEnabled);
+  const [hasLoadedInitialCloud, setHasLoadedInitialCloud] = useState<boolean>(
+    () => !cloudEnabled,
+  );
   const [isSavingShift, setIsSavingShift] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showLocalBanner, setShowLocalBanner] = useState<boolean>(() => !cloudEnabled);
@@ -117,6 +121,7 @@ export function SecuriLogApp() {
       setSyncError(msg);
     } finally {
       setIsLoadingCloud(false);
+      setHasLoadedInitialCloud(true);
     }
   }, [cloudEnabled]);
 
@@ -151,7 +156,10 @@ export function SecuriLogApp() {
         setSyncStatus("error");
         setSyncError(msg);
       } finally {
-        if (active) setIsLoadingCloud(false);
+        if (active) {
+          setIsLoadingCloud(false);
+          setHasLoadedInitialCloud(true);
+        }
       }
     }
 
@@ -442,6 +450,10 @@ export function SecuriLogApp() {
     );
   }
 
+  if (cloudEnabled && isLoadingCloud && !hasLoadedInitialCloud) {
+    return <AppSkeleton />;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 print:min-h-0 print:bg-white">
       <AppHeader
@@ -561,6 +573,7 @@ export function SecuriLogApp() {
             : ""
         }
         busy={isDeleting}
+        requirePin
         onConfirm={() => void handleConfirmDelete()}
         onCancel={() => {
           if (!isDeleting) setDeleteTarget(null);

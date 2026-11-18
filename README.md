@@ -21,8 +21,9 @@ Aplikasi web mobile-first berbasis **Next.js (App Router, TypeScript)**, **Tailw
 ## Konfigurasi Supabase
 
 1. Pastikan `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (atau `NEXT_PUBLIC_SUPABASE_ANON_KEY`) sudah terisi pada file `.env.local`.
-2. Buat tabel `hotel_settings` dan `shift_logs` di Supabase SQL Editor.
-3. Jalankan aplikasi:
+2. (Opsional) Atur `NEXT_PUBLIC_ADMIN_PIN` di `.env.local` untuk PIN otorisasi hapus arsip Danru/HOD (default: `1234`) dan `NEXT_PUBLIC_SITE_URL` untuk URL dasar preview Open Graph (WhatsApp).
+3. Buat tabel `hotel_settings` dan `shift_logs` di Supabase SQL Editor.
+4. Jalankan aplikasi:
 
 ```bash
 npm install
