@@ -25,7 +25,6 @@ import {
   Sun,
   Sunset,
   Trash,
-  Truck,
   User,
 } from "lucide-react";
 import { SHIFT_OPTIONS, VEHICLE_LABELS } from "@/lib/constants";
@@ -71,11 +70,10 @@ const VEHICLE_ITEMS: {
   key: keyof VehicleCount;
   label: string;
   hint: string;
-  icon: "motor" | "mobil" | "box";
+  icon: "motor" | "mobil";
 }[] = [
   { key: "motor", label: VEHICLE_LABELS.motor, hint: "Roda 2 / Ojek / Kurir", icon: "motor" },
   { key: "mobil", label: VEHICLE_LABELS.mobil, hint: "Tamu / Sedan / MPV / SUV", icon: "mobil" },
-  { key: "box", label: VEHICLE_LABELS.box, hint: "Logistik / Pengiriman / Vendor", icon: "box" },
 ];
 
 export function ActiveShiftTab({
@@ -458,102 +456,7 @@ export function ActiveShiftTab({
         </div>
       </section>
 
-      {/* 3. Rekap Kendaraan Parkir */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:p-6">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-800">
-              <Car className="h-4 w-4" aria-hidden="true" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-900 sm:text-base">
-                Rekap Kendaraan Parkir
-              </h2>
-              <p className="text-xs text-slate-500">
-                Gunakan tombol - / + atau ketik angka langsung
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-xl bg-slate-900 px-3.5 py-1.5 text-white">
-            <span className="text-xs font-medium text-slate-300">Total: </span>
-            <span className="font-mono text-base font-bold tabular-nums">
-              {totalVeh}
-            </span>
-            <span className="ml-1 text-xs font-medium text-slate-300">unit</span>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {VEHICLE_ITEMS.map((item) => {
-            const count = shift.vehicles[item.key];
-            return (
-              <div
-                key={item.key}
-                className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-800">
-                    {item.icon === "motor" && <Bike className="h-5 w-5" aria-hidden="true" />}
-                    {item.icon === "mobil" && <Car className="h-5 w-5" aria-hidden="true" />}
-                    {item.icon === "box" && <Truck className="h-5 w-5" aria-hidden="true" />}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor={`veh-${item.key}`}
-                      className="block text-sm font-bold text-slate-900"
-                    >
-                      {item.label}
-                    </label>
-                    <span className="text-xs text-slate-500">{item.hint}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => stepVehicle(item.key, -1)}
-                    disabled={count <= 0}
-                    aria-label={`Kurangi ${item.label}`}
-                    className="flex h-12 w-14 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-900 shadow-2xs transition-all hover:bg-slate-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <Minus className="h-5 w-5" />
-                  </button>
-
-                  <input
-                    id={`veh-${item.key}`}
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    value={count}
-                    onChange={(e) => setVehicleValue(item.key, e.target.value)}
-                    onFocus={(e) => e.currentTarget.select()}
-                    className="no-spinner h-12 w-24 rounded-xl border border-slate-300 bg-white text-center font-mono text-xl font-bold text-slate-900 tabular-nums focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => stepVehicle(item.key, 1)}
-                    aria-label={`Tambah ${item.label}`}
-                    className="flex h-12 w-14 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs transition-all hover:bg-slate-800 active:scale-95"
-                  >
-                    <Plus className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-900/10 bg-slate-900 px-4 py-3 text-white">
-          <span className="text-sm font-semibold">Total Kendaraan Parkir</span>
-          <span className="font-mono text-xl font-extrabold tabular-nums">
-            {totalVeh} Unit
-          </span>
-        </div>
-      </section>
-
-      {/* 4. Log Kegiatan Shift */}
+      {/* 3. Log Kegiatan Shift */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
@@ -650,6 +553,100 @@ export function ActiveShiftTab({
               ))}
             </ul>
           )}
+        </div>
+      </section>
+
+      {/* 4. Rekap Kendaraan Parkir */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs sm:p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-800">
+              <Car className="h-4 w-4" aria-hidden="true" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-slate-900 sm:text-base">
+                Rekap Kendaraan Parkir
+              </h2>
+              <p className="text-xs text-slate-500">
+                Gunakan tombol - / + atau ketik angka langsung
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-slate-900 px-3.5 py-1.5 text-white">
+            <span className="text-xs font-medium text-slate-300">Total: </span>
+            <span className="font-mono text-base font-bold tabular-nums">
+              {totalVeh}
+            </span>
+            <span className="ml-1 text-xs font-medium text-slate-300">unit</span>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {VEHICLE_ITEMS.map((item) => {
+            const count = shift.vehicles[item.key];
+            return (
+              <div
+                key={item.key}
+                className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-800">
+                    {item.icon === "motor" && <Bike className="h-5 w-5" aria-hidden="true" />}
+                    {item.icon === "mobil" && <Car className="h-5 w-5" aria-hidden="true" />}
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`veh-${item.key}`}
+                      className="block text-sm font-bold text-slate-900"
+                    >
+                      {item.label}
+                    </label>
+                    <span className="text-xs text-slate-500">{item.hint}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => stepVehicle(item.key, -1)}
+                    disabled={count <= 0}
+                    aria-label={`Kurangi ${item.label}`}
+                    className="flex h-12 w-14 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-900 shadow-2xs transition-all hover:bg-slate-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <Minus className="h-5 w-5" />
+                  </button>
+
+                  <input
+                    id={`veh-${item.key}`}
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={count}
+                    onChange={(e) => setVehicleValue(item.key, e.target.value)}
+                    onFocus={(e) => e.currentTarget.select()}
+                    className="no-spinner h-12 w-24 rounded-xl border border-slate-300 bg-white text-center font-mono text-xl font-bold text-slate-900 tabular-nums focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => stepVehicle(item.key, 1)}
+                    aria-label={`Tambah ${item.label}`}
+                    className="flex h-12 w-14 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs transition-all hover:bg-slate-800 active:scale-95"
+                  >
+                    <Plus className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-slate-900/10 bg-slate-900 px-4 py-3 text-white">
+          <span className="text-sm font-semibold">Total Kendaraan Parkir</span>
+          <span className="font-mono text-xl font-extrabold tabular-nums">
+            {totalVeh} Unit
+          </span>
         </div>
       </section>
 
@@ -825,47 +822,7 @@ export function ActiveShiftTab({
 
         <div className="mb-4">
           <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
-            1. Rekap Kendaraan Parkir
-          </h3>
-          <div className="grid grid-cols-4 border border-slate-900 text-center">
-            <div className="border-r border-slate-900 p-2">
-              <div className="text-[10px] font-semibold uppercase text-slate-600">
-                Sepeda Motor
-              </div>
-              <div className="mt-0.5 font-mono text-sm font-bold tabular-nums">
-                {shift.vehicles.motor} unit
-              </div>
-            </div>
-            <div className="border-r border-slate-900 p-2">
-              <div className="text-[10px] font-semibold uppercase text-slate-600">
-                Mobil
-              </div>
-              <div className="mt-0.5 font-mono text-sm font-bold tabular-nums">
-                {shift.vehicles.mobil} unit
-              </div>
-            </div>
-            <div className="border-r border-slate-900 p-2">
-              <div className="text-[10px] font-semibold uppercase text-slate-600">
-                Box / Vendor
-              </div>
-              <div className="mt-0.5 font-mono text-sm font-bold tabular-nums">
-                {shift.vehicles.box} unit
-              </div>
-            </div>
-            <div className="bg-slate-100 p-2">
-              <div className="text-[10px] font-bold uppercase text-slate-800">
-                Total Kendaraan
-              </div>
-              <div className="mt-0.5 font-mono text-sm font-extrabold tabular-nums">
-                {totalVeh} unit
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
-            2. Log Kegiatan Shift
+            1. Log Kegiatan Shift
           </h3>
           <table className="w-full border-collapse border border-slate-900 text-xs">
             <thead>
@@ -902,6 +859,38 @@ export function ActiveShiftTab({
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="mb-4">
+          <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-900">
+            2. Rekap Kendaraan Parkir
+          </h3>
+          <div className="grid grid-cols-3 border border-slate-900 text-center">
+            <div className="border-r border-slate-900 p-2">
+              <div className="text-[10px] font-semibold uppercase text-slate-600">
+                Sepeda Motor
+              </div>
+              <div className="mt-0.5 font-mono text-sm font-bold tabular-nums">
+                {shift.vehicles.motor} unit
+              </div>
+            </div>
+            <div className="border-r border-slate-900 p-2">
+              <div className="text-[10px] font-semibold uppercase text-slate-600">
+                Mobil
+              </div>
+              <div className="mt-0.5 font-mono text-sm font-bold tabular-nums">
+                {shift.vehicles.mobil} unit
+              </div>
+            </div>
+            <div className="bg-slate-100 p-2">
+              <div className="text-[10px] font-bold uppercase text-slate-800">
+                Total Kendaraan
+              </div>
+              <div className="mt-0.5 font-mono text-sm font-extrabold tabular-nums">
+                {totalVeh} unit
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="print-break-avoid mb-5">

@@ -34,7 +34,6 @@ export const MONTHS_ID = [
 export const VEHICLE_LABELS = {
   motor: "Sepeda Motor",
   mobil: "Mobil",
-  box: "Kendaraan Box/Vendor",
 } as const;
 
 export const OVERHANDLE_COMMENT_MAX_LENGTH = 1000;

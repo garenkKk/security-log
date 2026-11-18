@@ -31,7 +31,7 @@ export interface ShiftLogRow {
   officer: string;
   motor_count: number;
   mobil_count: number;
-  box_count: number;
+  box_count?: number;
   total_vehicles: number;
   activities: unknown;
   overhandle_comment: string;
@@ -123,7 +123,6 @@ export function rowToShiftRecord(row: Partial<ShiftLogRow>): ShiftRecord {
     vehicles: {
       motor: toNonNegInt(row.motor_count),
       mobil: toNonNegInt(row.mobil_count),
-      box: toNonNegInt(row.box_count),
     },
     activities: normalizeActivitiesJson(row.activities),
     overhandle: {
@@ -239,7 +238,6 @@ export async function insertShiftLog(record: ShiftRecord): Promise<ShiftRecord> 
     officer: record.officer,
     motor_count: record.vehicles.motor,
     mobil_count: record.vehicles.mobil,
-    box_count: record.vehicles.box,
     total_vehicles: totalVehicles(record.vehicles),
     activities: record.activities,
     overhandle_comment: ov.comment,

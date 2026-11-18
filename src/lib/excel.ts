@@ -51,7 +51,6 @@ export function downloadMonthlyWorkbook(
       "Petugas",
       "Sepeda Motor",
       "Mobil",
-      "Box/Vendor",
       "Total Kendaraan",
       "Status Overhandle",
       "Detail Kegiatan",
@@ -73,7 +72,6 @@ export function downloadMonthlyWorkbook(
       r.officer.trim() || "-",
       r.vehicles.motor,
       r.vehicles.mobil,
-      r.vehicles.box,
       totalVehicles(r.vehicles),
       ovStatus.label,
       activityText,
@@ -88,7 +86,6 @@ export function downloadMonthlyWorkbook(
     "",
     totals.motor,
     totals.mobil,
-    totals.box,
     grandTotal,
     `${completeCount}/${records.length} Lengkap`,
     `${totalActivities} entri kegiatan tercatat`,
@@ -96,10 +93,10 @@ export function downloadMonthlyWorkbook(
 
   const ws1 = XLSX.utils.aoa_to_sheet(sheet1Rows);
   ws1["!merges"] = [
-    { s: { r: 0, c: 0 }, e: { r: 0, c: 10 } },
-    { s: { r: 1, c: 0 }, e: { r: 1, c: 10 } },
-    { s: { r: 2, c: 0 }, e: { r: 2, c: 10 } },
-    { s: { r: 3, c: 0 }, e: { r: 3, c: 10 } },
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 9 } },
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 9 } },
+    { s: { r: 2, c: 0 }, e: { r: 2, c: 9 } },
+    { s: { r: 3, c: 0 }, e: { r: 3, c: 9 } },
   ];
   ws1["!cols"] = [
     { wch: 6 },
@@ -109,7 +106,6 @@ export function downloadMonthlyWorkbook(
     { wch: 24 },
     { wch: 14 },
     { wch: 12 },
-    { wch: 14 },
     { wch: 16 },
     { wch: 36 },
     { wch: 50 },
@@ -130,7 +126,6 @@ export function downloadMonthlyWorkbook(
     ],
     ["Total Sepeda Motor", totals.motor, "Akumulasi unit sepeda motor"],
     ["Total Mobil", totals.mobil, "Akumulasi unit mobil tamu & operasional"],
-    ["Total Kendaraan Box / Vendor", totals.box, "Akumulasi kendaraan logistik & vendor"],
     ["Grand Total Kendaraan", grandTotal, `Total seluruh kendaraan (${period})`],
     ["Total Log Kegiatan Shift", totalActivities, "Jumlah aktivitas tercatat selama bulan berjalan"],
     [],

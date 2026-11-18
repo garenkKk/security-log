@@ -13,7 +13,6 @@ import {
   Handshake,
   ListChecks,
   TriangleExclamationPoint,
-  Truck,
   User,
   X,
 } from "lucide-react";
@@ -159,7 +158,7 @@ export function ShiftDetailModal({
                 Total: {grandTotal} unit
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 gap-2.5">
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
                 <Bike className="mx-auto h-4 w-4 text-slate-600" />
                 <p className="mt-1 text-[11px] font-medium text-slate-600">
@@ -176,15 +175,6 @@ export function ShiftDetailModal({
                 </p>
                 <p className="mt-0.5 font-mono text-xl font-bold text-slate-900 tabular-nums">
                   {record.vehicles.mobil}
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
-                <Truck className="mx-auto h-4 w-4 text-slate-600" />
-                <p className="mt-1 text-[11px] font-medium text-slate-600">
-                  Box/Vendor
-                </p>
-                <p className="mt-0.5 font-mono text-xl font-bold text-slate-900 tabular-nums">
-                  {record.vehicles.box}
                 </p>
               </div>
             </div>

@@ -108,10 +108,10 @@ export function monthLabel(month: number, year: number): string {
 
 /* ---------- Data helpers ---------- */
 
-export const totalVehicles = (v: VehicleCount) => v.motor + v.mobil + v.box;
+export const totalVehicles = (v: VehicleCount) => v.motor + v.mobil;
 
 export function emptyVehicles(): VehicleCount {
-  return { motor: 0, mobil: 0, box: 0 };
+  return { motor: 0, mobil: 0 };
 }
 
 export function emptyOverhandle(): OverhandleInfo {
@@ -205,12 +205,6 @@ export function buildWhatsAppText(hotel: HotelInfo, s: ActiveShift): string {
   lines.push(`⏰ Jam Shift : ${s.shiftHours || "-"}`);
   lines.push(`👮 Petugas : ${s.officer.trim() || "-"}`);
   lines.push(line);
-  lines.push("*🚗 REKAP KENDARAAN PARKIR*");
-  lines.push(`• ${VEHICLE_LABELS.motor} : ${v.motor} unit`);
-  lines.push(`• ${VEHICLE_LABELS.mobil} : ${v.mobil} unit`);
-  lines.push(`• ${VEHICLE_LABELS.box} : ${v.box} unit`);
-  lines.push(`*Total Kendaraan : ${totalVehicles(v)} unit*`);
-  lines.push(line);
   lines.push("*📝 LOG KEGIATAN SHIFT*");
   if (s.activities.length === 0) {
     lines.push("- Tidak ada kegiatan tercatat -");
@@ -219,6 +213,11 @@ export function buildWhatsAppText(hotel: HotelInfo, s: ActiveShift): string {
       lines.push(`${i + 1}. ${a.description}`);
     });
   }
+  lines.push(line);
+  lines.push("*🚗 REKAP KENDARAAN PARKIR*");
+  lines.push(`• ${VEHICLE_LABELS.motor} : ${v.motor} unit`);
+  lines.push(`• ${VEHICLE_LABELS.mobil} : ${v.mobil} unit`);
+  lines.push(`*Total Kendaraan : ${totalVehicles(v)} unit*`);
   lines.push(line);
   lines.push("*🤝 STATUS OVERHANDLE*");
   lines.push(`• Status: ${ovStatus.label}`);
@@ -305,7 +304,6 @@ export function buildMonthlyCSV(
     (acc, r) => ({
       motor: acc.motor + r.vehicles.motor,
       mobil: acc.mobil + r.vehicles.mobil,
-      box: acc.box + r.vehicles.box,
     }),
     emptyVehicles(),
   );
@@ -322,7 +320,6 @@ export function buildMonthlyCSV(
   out.push(row(["Total Shift Tercatat", records.length]));
   out.push(row(["Total Sepeda Motor", totals.motor]));
   out.push(row(["Total Mobil", totals.mobil]));
-  out.push(row(["Total Box/Vendor", totals.box]));
   out.push(row(["Grand Total Kendaraan", totalVehicles(totals)]));
   out.push("");
   out.push(
@@ -335,7 +332,6 @@ export function buildMonthlyCSV(
       "Petugas",
       "Sepeda Motor",
       "Mobil",
-      "Box/Vendor",
       "Total Kendaraan",
       "Jumlah Kegiatan",
       "Detail Kegiatan",
@@ -352,7 +348,6 @@ export function buildMonthlyCSV(
         r.officer || "-",
         r.vehicles.motor,
         r.vehicles.mobil,
-        r.vehicles.box,
         totalVehicles(r.vehicles),
         r.activities.length,
         r.activities.map((a, idx) => `${idx + 1}. ${a.description}`).join(" | ") || "-",
@@ -369,7 +364,6 @@ export function buildMonthlyCSV(
       "",
       totals.motor,
       totals.mobil,
-      totals.box,
       totalVehicles(totals),
       records.reduce((n, r) => n + r.activities.length, 0),
       "",
@@ -417,7 +411,6 @@ function normalizeVehicles(raw: unknown): VehicleCount {
   return {
     motor: toNonNegInt(obj.motor),
     mobil: toNonNegInt(obj.mobil),
-    box: toNonNegInt(obj.box),
   };
 }
 
@@ -617,7 +610,6 @@ export function sumVehicles(records: ShiftRecord[]): VehicleCount {
     (acc, r) => ({
       motor: acc.motor + r.vehicles.motor,
       mobil: acc.mobil + r.vehicles.mobil,
-      box: acc.box + r.vehicles.box,
     }),
     emptyVehicles(),
   );
@@ -728,27 +720,7 @@ export function buildShiftDocHtml(hotel: HotelInfo, s: ActiveShift): string {
     </tr>
   </table>
 
-  <div class="section-title">1. Rekap Kendaraan Parkir</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Sepeda Motor</th>
-        <th>Mobil</th>
-        <th>Kendaraan Box / Vendor</th>
-        <th>Total Kendaraan</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="text-align:center;font-weight:bold;">${v.motor} unit</td>
-        <td style="text-align:center;font-weight:bold;">${v.mobil} unit</td>
-        <td style="text-align:center;font-weight:bold;">${v.box} unit</td>
-        <td style="text-align:center;font-weight:bold;background:#f8fafc;">${totalVehicles(v)} unit</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="section-title">2. Log Kegiatan Shift</div>
+  <div class="section-title">1. Log Kegiatan Shift</div>
   <table>
     <thead>
       <tr>
@@ -758,6 +730,24 @@ export function buildShiftDocHtml(hotel: HotelInfo, s: ActiveShift): string {
     </thead>
     <tbody>
       ${activityRows}
+    </tbody>
+  </table>
+
+  <div class="section-title">2. Rekap Kendaraan Parkir</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Sepeda Motor</th>
+        <th>Mobil</th>
+        <th>Total Kendaraan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:center;font-weight:bold;">${v.motor} unit</td>
+        <td style="text-align:center;font-weight:bold;">${v.mobil} unit</td>
+        <td style="text-align:center;font-weight:bold;background:#f8fafc;">${totalVehicles(v)} unit</td>
+      </tr>
     </tbody>
   </table>
 

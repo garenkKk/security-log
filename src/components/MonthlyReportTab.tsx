@@ -15,7 +15,6 @@ import {
   Printer,
   RefreshCw,
   Trash,
-  Truck,
 } from "lucide-react";
 import { MONTHS_ID, SHIFT_OPTIONS } from "@/lib/constants";
 import { downloadMonthlyWorkbook } from "@/lib/excel";
@@ -295,7 +294,7 @@ export function MonthlyReportTab({
 
         {/* Kartu Ringkasan Eksekutif Bulanan */}
         <section aria-label="Ringkasan Eksekutif Bulanan">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
               <div className="flex items-center justify-between text-slate-500">
                 <span className="text-xs font-semibold">Total Shift Tercatat</span>
@@ -331,18 +330,7 @@ export function MonthlyReportTab({
               <p className="mt-0.5 text-[11px] text-slate-500">unit tercatat</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-              <div className="flex items-center justify-between text-slate-500">
-                <span className="text-xs font-semibold">Box / Vendor</span>
-                <Truck className="h-4 w-4" aria-hidden="true" />
-              </div>
-              <p className="mt-2 font-mono text-2xl font-extrabold text-slate-900 tabular-nums">
-                {vehicleTotals.box}
-              </p>
-              <p className="mt-0.5 text-[11px] text-slate-500">unit tercatat</p>
-            </div>
-
-            <div className="col-span-2 rounded-2xl border border-slate-900 bg-slate-900 p-4 text-white shadow-xs sm:col-span-2 lg:col-span-1">
+            <div className="rounded-2xl border border-slate-900 bg-slate-900 p-4 text-white shadow-xs">
               <div className="flex items-center justify-between text-slate-300">
                 <span className="text-xs font-semibold">Grand Total Kendaraan</span>
                 <ChartColumn className="h-4 w-4 text-emerald-400" aria-hidden="true" />
@@ -440,9 +428,9 @@ export function MonthlyReportTab({
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-2.5 text-center text-xs">
+                      <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-50 p-2.5 text-center text-xs">
                         <div>
-                          <div className="text-[11px] text-slate-500">Motor</div>
+                          <div className="text-[11px] text-slate-500">Sepeda Motor</div>
                           <div className="font-mono font-bold text-slate-900 tabular-nums">
                             {r.vehicles.motor}
                           </div>
@@ -451,12 +439,6 @@ export function MonthlyReportTab({
                           <div className="text-[11px] text-slate-500">Mobil</div>
                           <div className="font-mono font-bold text-slate-900 tabular-nums">
                             {r.vehicles.mobil}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-[11px] text-slate-500">Box/Vendor</div>
-                          <div className="font-mono font-bold text-slate-900 tabular-nums">
-                            {r.vehicles.box}
                           </div>
                         </div>
                       </div>
@@ -553,9 +535,6 @@ export function MonthlyReportTab({
                               <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-slate-700 tabular-nums">
                                 Mbl: {r.vehicles.mobil}
                               </span>
-                              <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-slate-700 tabular-nums">
-                                Box: {r.vehicles.box}
-                              </span>
                               <span className="rounded-md bg-slate-900 px-2 py-0.5 font-mono font-bold text-white tabular-nums">
                                 Σ {rowTotal}
                               </span>
@@ -631,7 +610,7 @@ export function MonthlyReportTab({
         </div>
 
         {/* Ringkasan Eksekutif Print */}
-        <div className="mb-4 grid grid-cols-5 border border-slate-900 text-center">
+        <div className="mb-4 grid grid-cols-4 border border-slate-900 text-center">
           <div className="border-r border-slate-900 p-2">
             <div className="text-[10px] font-semibold uppercase text-slate-600">
               Total Shift
@@ -656,14 +635,6 @@ export function MonthlyReportTab({
               {vehicleTotals.mobil}
             </div>
           </div>
-          <div className="border-r border-slate-900 p-2">
-            <div className="text-[10px] font-semibold uppercase text-slate-600">
-              Box / Vendor
-            </div>
-            <div className="mt-0.5 font-mono text-sm font-bold tabular-nums">
-              {vehicleTotals.box}
-            </div>
-          </div>
           <div className="bg-slate-100 p-2">
             <div className="text-[10px] font-bold uppercase text-slate-800">
               Grand Total
@@ -684,7 +655,6 @@ export function MonthlyReportTab({
               <th className="border border-slate-900 px-2 py-1.5">Petugas</th>
               <th className="border border-slate-900 px-2 py-1.5 text-center">Motor</th>
               <th className="border border-slate-900 px-2 py-1.5 text-center">Mobil</th>
-              <th className="border border-slate-900 px-2 py-1.5 text-center">Box</th>
               <th className="border border-slate-900 px-2 py-1.5 text-center">Total</th>
               <th className="border border-slate-900 px-2 py-1.5">Log Kegiatan Shift</th>
             </tr>
@@ -713,9 +683,6 @@ export function MonthlyReportTab({
                 </td>
                 <td className="border border-slate-900 px-2 py-1.5 text-center align-top font-mono tabular-nums">
                   {r.vehicles.mobil}
-                </td>
-                <td className="border border-slate-900 px-2 py-1.5 text-center align-top font-mono tabular-nums">
-                  {r.vehicles.box}
                 </td>
                 <td className="border border-slate-900 px-2 py-1.5 text-center align-top font-mono font-bold tabular-nums">
                   {totalVehicles(r.vehicles)}
@@ -750,9 +717,6 @@ export function MonthlyReportTab({
               </td>
               <td className="border border-slate-900 px-2 py-1.5 text-center font-mono tabular-nums">
                 {vehicleTotals.mobil}
-              </td>
-              <td className="border border-slate-900 px-2 py-1.5 text-center font-mono tabular-nums">
-                {vehicleTotals.box}
               </td>
               <td className="border border-slate-900 px-2 py-1.5 text-center font-mono tabular-nums">
                 {grandTotal}

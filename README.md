@@ -7,14 +7,14 @@ Aplikasi web mobile-first berbasis **Next.js (App Router, TypeScript)**, **Tailw
 1. **1. Input Shift Aktif**
    - **Kop & Identitas Hotel**: Nama dan alamat hotel tersinkron ke tabel `hotel_settings` di Supabase (atau `localStorage` bila mode lokal).
    - **Metadata Shift**: Hari & tanggal (tampilan lokal Indonesia + nilai ISO `YYYY-MM-DD`), pilihan Shift 1 Pagi (`08:00 - 16:00`), Shift 2 Siang (`16:00 - 00:00`), Shift 3 Malam (`00:00 - 08:00`), jam shift otomatis (dapat diedit), dan nama petugas.
-   - **Rekap Kendaraan Parkir**: Kontrol `-`, input angka langsung, dan `+` berukuran besar untuk Sepeda Motor, Mobil, dan Kendaraan Box/Vendor dengan kalkulasi total otomatis.
    - **Log Kegiatan Shift**: Nomor urut otomatis mulai dari 1 yang bertambah sesuai urutan saat klik tombol `+` serta input uraian kegiatan, lengkap dengan daftar bernomor dan tombol hapus.
+   - **Rekap Kendaraan Parkir**: Kontrol `-`, input angka langsung, dan `+` berukuran besar untuk Sepeda Motor dan Mobil dengan kalkulasi total otomatis.
    - **Serah Terima Tugas (Overhandle)**: Kolom komentar kustom dari shift sebelumnya (maks. 1000 huruf), upload/kamera foto bukti serah terima yang otomatis dikompres melalui HTML5 `<canvas>` (lebar maks. 600px, JPEG 0.7), checklist tanda tangan digital 2 pihak dengan perekaman waktu otomatis, dan status otomatis (`OVERHANDLE LENGKAP` / `BELUM OVERHANDLE`).
    - **Aksi Akhir Shift**: Salin laporan terformat ke clipboard untuk WhatsApp, **Cetak / Simpan PDF** laporan shift (`window.print()`), **Download DOC (Word)** (`.doc`) lengkap dengan kolom tanda tangan **Diserahkan**, **Diketahui**, dan **Diterima**, serta simpan ke tabel `shift_logs` Supabase (terkumpul real-time lintas perangkat) dan reset form untuk shift berikutnya.
 
 2. **2. Rekap Laporan Bulanan**
    - **Filter Bulan & Tahun**: Dropdown bulan dan tahun (default bulan berjalan) dengan pembaruan real-time dari Supabase.
-   - **Kartu Ringkasan Eksekutif**: Total shift tercatat, total Sepeda Motor, total Mobil, total Box/Vendor, dan Grand Total kendaraan.
+   - **Kartu Ringkasan Eksekutif**: Total shift tercatat, total Sepeda Motor, total Mobil, dan Grand Total kendaraan.
    - **Tabel Rekap & Detail Kegiatan**: Daftar seluruh shift pada bulan terpilih dengan badge status overhandle, tombol lihat detail, dan hapus arsip.
    - **Export Laporan**: **Download Rekap Bulanan (.xlsx)** berisi 2 sheet (`Rekap Harian & Shift` dengan total bulanan + `Ringkasan Eksekutif` dengan persentase kelengkapan overhandle) serta mode **Cetak / Simpan PDF** (`window.print()`) dengan kop surat hotel, judul resmi, tabel lengkap, dan kolom tanda tangan.
 

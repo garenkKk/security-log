@@ -8,7 +8,6 @@ export interface HotelInfo {
 export interface VehicleCount {
   motor: number;
   mobil: number;
-  box: number;
 }
 
 export interface Activity {
