@@ -30,18 +30,16 @@ import {
 import { SHIFT_OPTIONS, VEHICLE_LABELS } from "@/lib/constants";
 import type { ActiveShift, HotelInfo, ShiftKey, VehicleCount } from "@/lib/types";
 import {
-  buildShiftDocHtml,
   buildWhatsAppText,
   copyToClipboard,
-  downloadTextFile,
   emptyOverhandle,
   formatDateID,
   getOverhandleStatus,
-  slugify,
   todayISO,
   totalVehicles,
   uid,
 } from "@/lib/utils";
+import { downloadShiftDocx } from "@/lib/word";
 import { OverhandleSection } from "./OverhandleSection";
 import type { ToastTone } from "./Toast";
 
@@ -89,6 +87,7 @@ export function ActiveShiftTab({
 }: ActiveShiftTabProps) {
   const [activityDesc, setActivityDesc] = useState("");
   const [copiedWA, setCopiedWA] = useState(false);
+  const [downloadingDoc, setDownloadingDoc] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
   const nextActivityNumber = shift.activities.length + 1;
@@ -174,11 +173,17 @@ export function ActiveShiftTab({
     window.print();
   }
 
-  function handleDownloadShiftDoc() {
-    const html = buildShiftDocHtml(hotel, shift);
-    const filename = `security-log_Shift_${slugify(hotel.name)}_${shift.dateISO}_${SHIFT_OPTIONS[shift.shift].short}.doc`;
-    downloadTextFile(html, filename, "application/msword;charset=utf-8");
-    onNotify(`Dokumen laporan shift berhasil diunduh (${filename}).`, "success");
+  async function handleDownloadShiftDoc() {
+    if (downloadingDoc) return;
+    setDownloadingDoc(true);
+    try {
+      const filename = await downloadShiftDocx(hotel, shift);
+      onNotify(`Dokumen Word (.docx) berhasil diunduh (${filename}).`, "success");
+    } catch {
+      onNotify("Gagal membuat dokumen Word (.docx). Silakan coba lagi.", "warning");
+    } finally {
+      setDownloadingDoc(false);
+    }
   }
 
   const ov = shift.overhandle ?? emptyOverhandle();
@@ -204,7 +209,7 @@ export function ActiveShiftTab({
                 Kop &amp; Identitas Hotel
               </h2>
               <p className="text-xs text-slate-500">
-                Digunakan untuk laporan WhatsApp, ekspor Excel (.xlsx), DOC, dan cetak PDF
+                Digunakan untuk laporan WhatsApp, ekspor Excel (.xlsx), Word (.docx), dan cetak PDF
               </p>
             </div>
           </div>
@@ -675,7 +680,7 @@ export function ActiveShiftTab({
               Aksi Akhir Shift
             </h2>
             <p className="text-xs text-slate-500">
-              Salin laporan WhatsApp, cetak PDF / unduh dokumen Word (.doc), atau arsipkan shift
+              Salin laporan WhatsApp, cetak PDF / unduh dokumen Word (.docx), atau arsipkan shift
             </p>
           </div>
         </div>
@@ -715,10 +720,20 @@ export function ActiveShiftTab({
           <button
             type="button"
             onClick={handleDownloadShiftDoc}
-            className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-900 transition-all hover:bg-slate-50 active:scale-[0.99]"
+            disabled={downloadingDoc}
+            className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-900 transition-all hover:bg-slate-50 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-65"
           >
-            <FileText className="h-4 w-4 text-sky-700" />
-            <span>Download DOC (Word)</span>
+            {downloadingDoc ? (
+              <>
+                <LoaderCircle className="h-4 w-4 animate-spin text-sky-700" />
+                <span>Menyiapkan Word...</span>
+              </>
+            ) : (
+              <>
+                <FileText className="h-4 w-4 text-sky-700" />
+                <span>Download Word (.docx)</span>
+              </>
+            )}
           </button>
         </div>
 

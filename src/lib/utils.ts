@@ -373,16 +373,21 @@ export function buildMonthlyCSV(
   return out.join("\r\n");
 }
 
-export function downloadTextFile(content: string, filename: string, mime = "text/csv;charset=utf-8") {
-  const blob = new Blob([content], { type: mime });
+export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  a.style.display = "none";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  // Delay revoke slightly so mobile browsers finish initiating the download.
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+export function downloadTextFile(content: string, filename: string, mime = "text/csv;charset=utf-8") {
+  downloadBlob(new Blob([content], { type: mime }), filename);
 }
 
 export function slugify(text: string): string {
@@ -624,185 +629,6 @@ export function getAvailableYears(records: ShiftRecord[], currentYear: number): 
     }
   }
   return Array.from(set).sort((a, b) => b - a);
-}
-
-/* ---------- Word (.doc) Export for Active Shift ---------- */
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-export function buildShiftDocHtml(hotel: HotelInfo, s: ActiveShift): string {
-  const v = s.vehicles;
-  const ov = s.overhandle ?? emptyOverhandle();
-  const ovStatus = getOverhandleStatus(ov);
-  const handoverName = ov.handoverBy.name.trim() || s.officer.trim() || "Petugas Shift Lama";
-  const receivedName = ov.receivedBy.name.trim() || "Petugas Shift Baru";
-  const diserahkanDocName = ov.handoverBy.name.trim() || s.officer.trim();
-  const diterimaDocName = ov.receivedBy.name.trim();
-  const commentHtml = ov.comment.trim()
-    ? escapeHtml(ov.comment.trim()).replace(/\r?\n/g, "<br />")
-    : "<em>- Tidak ada komentar overhandle -</em>";
-
-  const activityRows =
-    s.activities.length === 0
-      ? `<tr><td colspan="2" style="text-align:center;color:#64748b;padding:8px;">Tidak ada kegiatan tercatat pada shift ini.</td></tr>`
-      : s.activities
-          .map(
-            (a, idx) =>
-              `<tr>
-                <td style="width:42px;text-align:center;font-weight:bold;">${idx + 1}</td>
-                <td>${escapeHtml(a.description)}</td>
-              </tr>`,
-          )
-          .join("");
-
-  const photoHtml = ov.photoDataUrl
-    ? `<div style="margin-top:10px;">
-         <p style="margin:0 0 6px 0;font-weight:bold;font-size:11px;">Bukti Foto Serah Terima:</p>
-         <img src="${ov.photoDataUrl}" width="320" alt="Bukti Foto Overhandle" style="border:1px solid #94a3b8;" />
-       </div>`
-    : `<p style="margin:8px 0 0 0;font-size:11px;color:#64748b;"><em>Foto Bukti: Belum dilampirkan</em></p>`;
-
-  return `<!DOCTYPE html>
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-<meta charset="utf-8" />
-<title>Laporan Shift Keamanan - ${escapeHtml(formatDateShort(s.dateISO))}</title>
-<style>
-  @page { size: A4; margin: 16mm 14mm; }
-  body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #0f172a; line-height: 1.4; }
-  h1, h2, h3, p { margin: 0; }
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  th, td { border: 1px solid #334155; padding: 6px 8px; font-size: 10.5pt; vertical-align: top; }
-  th { background-color: #f1f5f9; text-align: left; font-weight: bold; }
-  .kop { text-align: center; border-bottom: 3px double #0f172a; padding-bottom: 8px; margin-bottom: 12px; }
-  .kop h1 { font-size: 15pt; text-transform: uppercase; letter-spacing: 0.5px; }
-  .kop p { font-size: 9.5pt; color: #334155; margin-top: 2px; }
-  .title { text-align: center; margin-bottom: 12px; }
-  .title h2 { font-size: 13pt; text-decoration: underline; text-transform: uppercase; }
-  .section-title { font-size: 11pt; font-weight: bold; text-transform: uppercase; margin-top: 14px; margin-bottom: 4px; color: #0f172a; }
-</style>
-</head>
-<body>
-  <div class="kop">
-    <h1>${escapeHtml(hotel.name.trim() || "IDENTITAS HOTEL BELUM DIATUR")}</h1>
-    ${hotel.address.trim() ? `<p>${escapeHtml(hotel.address.trim())}</p>` : ""}
-  </div>
-
-  <div class="title">
-    <h2>LAPORAN KEAMANAN SHIFT</h2>
-  </div>
-
-  <table>
-    <tr>
-      <th style="width:160px;">Hari / Tanggal</th>
-      <td>${escapeHtml(formatDateID(s.dateISO))} (${escapeHtml(s.dateISO)})</td>
-    </tr>
-    <tr>
-      <th>Shift</th>
-      <td>${escapeHtml(SHIFT_OPTIONS[s.shift].label)}</td>
-    </tr>
-    <tr>
-      <th>Jam Shift</th>
-      <td>${escapeHtml(s.shiftHours || "-")}</td>
-    </tr>
-    <tr>
-      <th>Petugas</th>
-      <td>${escapeHtml(s.officer.trim() || "-")}</td>
-    </tr>
-  </table>
-
-  <div class="section-title">1. Log Kegiatan Shift</div>
-  <table>
-    <thead>
-      <tr>
-        <th style="width:42px;text-align:center;">No</th>
-        <th>Uraian Kegiatan</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${activityRows}
-    </tbody>
-  </table>
-
-  <div class="section-title">2. Rekap Kendaraan Parkir</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Sepeda Motor</th>
-        <th>Mobil</th>
-        <th>Total Kendaraan</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="text-align:center;font-weight:bold;">${v.motor} unit</td>
-        <td style="text-align:center;font-weight:bold;">${v.mobil} unit</td>
-        <td style="text-align:center;font-weight:bold;background:#f8fafc;">${totalVehicles(v)} unit</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="section-title">3. Serah Terima Tugas (Overhandle)</div>
-  <table>
-    <tr>
-      <th style="width:160px;">Status Overhandle</th>
-      <td style="font-weight:bold;color:${ovStatus.complete ? "#166534" : "#991b1b"};">
-        ${escapeHtml(ovStatus.label)}
-      </td>
-    </tr>
-    <tr>
-      <th>Komentar / Catatan</th>
-      <td>${commentHtml}</td>
-    </tr>
-    <tr>
-      <th>Menyerahkan (Shift Lama)</th>
-      <td>${
-        ov.handoverBy.signed
-          ? `[&#10003;] ${escapeHtml(handoverName)} (Pukul ${escapeHtml(ov.handoverBy.signedAt || "-")})`
-          : "[&#10007;] BELUM TTD"
-      }</td>
-    </tr>
-    <tr>
-      <th>Menerima (Shift Baru)</th>
-      <td>${
-        ov.receivedBy.signed
-          ? `[&#10003;] ${escapeHtml(receivedName)} (Pukul ${escapeHtml(ov.receivedBy.signedAt || "-")})`
-          : "[&#10007;] BELUM TTD"
-      }</td>
-    </tr>
-  </table>
-  ${photoHtml}
-
-  <table style="margin-top:24px;">
-    <tr>
-      <td style="width:33.3%;text-align:center;border:1px solid #334155;padding:10px 8px;">
-        <strong>Diserahkan,</strong><br />
-        <span style="font-size:9.5pt;color:#475569;">Petugas Shift</span><br /><br /><br /><br />
-        <strong><u>${escapeHtml(diserahkanDocName || "( ................................. )")}</u></strong>
-      </td>
-      <td style="width:33.3%;text-align:center;border:1px solid #334155;padding:10px 8px;">
-        <strong>Diketahui,</strong><br />
-        <span style="font-size:9.5pt;color:#475569;">Danru / Chief Security</span><br /><br /><br /><br />
-        <strong>( ................................. )</strong>
-      </td>
-      <td style="width:33.3%;text-align:center;border:1px solid #334155;padding:10px 8px;">
-        <strong>Diterima,</strong><br />
-        <span style="font-size:9.5pt;color:#475569;">Petugas Shift Berikutnya</span><br /><br /><br /><br />
-        <strong><u>${escapeHtml(diterimaDocName || "( ................................. )")}</u></strong>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
 }
 
 
